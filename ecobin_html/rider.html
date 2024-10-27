@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
+            display: flex;
+        }
+
+        #map {
+            flex: 1;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 400px;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .location-info {
+            padding: 15px 20px;
+            background: #f7fafc;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .input-group {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .waste-type-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .waste-type-option {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .waste-type-option.selected {
+            background: #4299e1;
+            color: white;
+            border-color: #4299e1;
+        }
+
+        .volume-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .volume-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .vehicle-list {
+            padding: 20px;
+        }
+
+        .vehicle-card {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vehicle-card:hover {
+            border-color: #4299e1;
+            transform: translateY(-2px);
+        }
+
+        .vehicle-card.selected {
+            border-color: #4299e1;
+            background: #ebf8ff;
+        }
+
+        .request-button {
+            width: calc(100% - 40px);
+            padding: 16px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px;
+            opacity: 0.6;
+        }
+
+        .request-button.active {
+            opacity: 1;
+            background: #3182ce;
+        }
+
+        .request-button.active:hover {
+            background: #2c5282;
+        }
+
+        .request-button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="header">
+            <h1>Request Waste Collection</h1>
+        </div>
+
+        <div class="location-info" id="selected-location">
+            Click on the map to select your location
+        </div>
+
+        <div class="input-group">
+            <label>Waste Type</label>
+            <div class="waste-type-options">
+                <div class="waste-type-option" onclick="selectWasteType(this, 'organic')">Organic</div>
+                <div class="waste-type-option" onclick="selectWasteType(this, 'recyclable')">Recyclable</div>
+                <div class="waste-type-option" onclick="selectWasteType(this, 'electronic')">Electronic</div>
+                <div class="waste-type-option" onclick="selectWasteType(this, 'hazardous')">Hazardous</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Approximate Volume</label>
+            <input type="range" class="volume-slider" min="1" max="5" step="1" value="1" onInput="updateVolumeLabel(this.value)">
+            <div class="volume-labels">
+                <span>Small Bag</span>
+                <span id="volume-value">1 bag</span>
+                <span>Large Truck</span>
+            </div>
+        </div>
+
+        <div class="vehicle-list" id="vehicle-list">
+            <h2 style="margin-bottom: 15px; color: #2d3748;">Nearby Collection Hubs</h2>
+            <!-- Hubs will be dynamically added here -->
+        </div>
+
+        <button id="request-button" class="request-button" onclick="requestPickup()" disabled>
+            Request Pickup
+        </button>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script>
+        let map, userMarker;
+        let selectedHubId = null;
+        let selectedWasteType = null;
+
+        // Kerala waste collection hubs - Replace with actual hub data
+        const collectionHubs = [
+            { id: 1, name: "Trivandrum Hub", lat: 8.5241, lng: 76.9366, capacity: "Large" },
+            { id: 2, name: "Kochi Hub", lat: 9.9312, lng: 76.2673, capacity: "Large" },
+            { id: 3, name: "Kozhikode Hub", lat: 11.2588, lng: 75.7804, capacity: "Medium" },
+            { id: 4, name: "Thrissur Hub", lat: 10.5276, lng: 76.2144, capacity: "Medium" },
+            { id: 5, name: "Kollam Hub", lat: 8.8932, lng: 76.6141, capacity: "Small" }
+        ];
+
+        // Initialize map
+        function initMap() {
+            // Center map on Kerala
+            map = L.map('map').setView([10.8505, 76.2711], 7);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Add collection hubs to map
+            collectionHubs.forEach(hub => {
+                const hubMarker = L.circleMarker([hub.lat, hub.lng], {
+                    radius: 8,
+                    fillColor: '#ff4444',
+                    color: '#fff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(map);
+
+                hubMarker.bindPopup(`
+                    <b>${hub.name}</b><br>
+                    Capacity: ${hub.capacity}
+                `);
+            });
+
+            // Handle map clicks
+            map.on('click', function(e) {
+                setUserLocation(e.latlng);
+            });
+        }
+
+        function setUserLocation(latlng) {
+            // Remove existing user marker if any
+            if (userMarker) {
+                map.removeLayer(userMarker);
+            }
+
+            // Add new user marker
+            userMarker = L.circleMarker([latlng.lat, latlng.lng], {
+                radius: 8,
+                fillColor: '#4CAF50',
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map);
+
+            // Update location info
+            document.getElementById('selected-location').innerHTML = `
+                Selected Location:<br>
+                Latitude: ${latlng.lat.toFixed(4)}, Longitude: ${latlng.lng.toFixed(4)}
+            `;
+
+            // Find and display nearest hubs
+            updateNearestHubs(latlng);
+            checkRequestButtonStatus();
+        }
+
+        function updateNearestHubs(location) {
+            // Calculate distances and sort hubs
+            const hubsWithDistance = collectionHubs.map(hub => ({
+                ...hub,
+                distance: calculateDistance(location.lat, location.lng, hub.lat, hub.lng)
+            })).sort((a, b) => a.distance - b.distance);
+
+            // Update hub list in sidebar
+            const vehicleList = document.getElementById('vehicle-list');
+            vehicleList.innerHTML = '<h2 style="margin-bottom: 15px; color: #2d3748;">Nearby Collection Hubs</h2>';
+
+            hubsWithDistance.forEach(hub => {
+                const card = document.createElement('div');
+                card.className = `vehicle-card ${hub.id === selectedHubId ? 'selected' : ''}`;
+                card.onclick = () => selectHub(hub.id);
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <strong>${hub.name}</strong>
+                        <span>${hub.distance.toFixed(1)} km away</span>
+                    </div>
+                    <div style="color: #666;">
+                        Capacity: ${hub.capacity}
+                    </div>
+                `;
+                vehicleList.appendChild(card);
+            });
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                     Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function selectHub(hubId) {
+            selectedHubId = hubId;
+            document.querySelectorAll('.vehicle-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`.vehicle-card:nth-child(${hubId})`).classList.add('selected');
+            checkRequestButtonStatus();
+        }
+
+        function selectWasteType(element, type) {
+            document.querySelectorAll('.waste-type-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedWasteType = type;
+            checkRequestButtonStatus();
+        }
+
+        function updateVolumeLabel(value) {
+            const labels = ['1 bag', '2-3 bags', 'Small bin', 'Large bin', 'Truck load'];
+            document.getElementById('volume-value').textContent = labels[value - 1];
+        }
+
+        function checkRequestButtonStatus() {
+            const button = document.getElementById('request-button');
+            const isValid = userMarker && selectedHubId && selectedWasteType;
+            
+            button.disabled = !isValid;
+            if (isValid) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        }
+
+        function requestPickup() {
+            const volume = document.querySelector('.volume-slider').value;
+            const selectedHub = collectionHubs.find(h => h.id === selectedHubId);
+            
+            const requestData = {
+                location: {
+                    lat: userMarker.getLatLng().lat,
+                    lng: userMarker.getLatLng().lng
+                },
+                wasteType: selectedWasteType,
+                volume: volume,
+                hubId: selectedHubId,
+                hubName: selectedHub.name
+            };
+
+            console.log('Pickup requested:', requestData);
+            alert('Pickup request submitted successfully! The nearest hub will contact you shortly.');
+        }
+
+        // Initialize the map when the page loads
+        window.onload = initMap;
+    </script>
+</body>
+</html>

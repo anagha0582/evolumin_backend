@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBin Dashboard - Track Collections</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .highlight {
+            background-color: #ffffcc; /* Light yellow background */
+            border: 2px solid #ffa500; /* Orange border */
+            transition: background-color 0.5s, border 0.5s; /* Smooth transition effects */
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <span class="logo-icon">♻️</span>
+                <span class="logo-text">EcoBin</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="dashboard.html" class="nav-link">Profile</a>
+                <a href="#" class="nav-link logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="dashboard-sidebar" data-aos="fade-right">
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div class="user-details">
+                    <h3>John Doe</h3>
+                    <p>Premium Member</p>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item active">
+                    <span class="menu-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="rider.html" class="menu-item">
+                    <span class="menu-icon">📅</span>
+                    Schedule
+                </a>
+                <a href="#" class="menu-item" id="historyButton">
+                    <span class="menu-icon">📜</span>
+                    History
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-main">
+            <div class="dashboard-header" data-aos="fade-down">
+                <h1>Collection Dashboard</h1>
+                <div class="date-picker">
+                    <input type="date" class="date-input">
+                </div>
+            </div>
+
+            <div class="dashboard-stats" data-aos="fade-up">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <h3>Total Collections</h3>
+                        <p>24</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚖️</div>
+                    <div class="stat-info">
+                        <h3>Total Weight</h3>
+                        <p>487 kg</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <h3>Recycling Credits</h3>
+                        <p>2,450</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-collections" data-aos="fade-up" data-aos-delay="100">
+                <h2>Recent Collections</h2>
+                <div class="collection-table">
+                    <div class="table-header">
+                        <div class="header-cell">Date</div>
+                        <div class="header-cell">Type</div>
+                        <div class="header-cell">Weight</div>
+                        <div class="header-cell">Status</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="cell">2024-10-25</div>
+                        <div class="cell">Recyclables</div>
+                        <div class="cell">25 kg</div>
+                        <div class="cell"><span class="status completed">Completed</span></div>
+                    </div>
+                    <div class="table-row">
+                        <div class="cell">2024-10-22</div>
+                        <div class="cell">Organic</div>
+                        <div class="cell">18 kg</div>
+                        <div class="cell"><span class="status completed">Completed</span></div>
+                    </div>
+                    <div class="table-row">
+                        <div class="cell">2024-10-20</div>
+                        <div class="cell">Electronic</div>
+                        <div class="cell">12 kg</div>
+                        <div class="cell"><span class="status pending">Processing</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init();
+
+        document.getElementById('historyButton').addEventListener('click', function() {
+            const recentCollections = document.querySelector('.recent-collections');
+            recentCollections.classList.add('highlight'); // Adds the highlight class
+            
+            // Optional: Remove the highlight after 3 seconds
+            setTimeout(() => {
+                recentCollections.classList.remove('highlight');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBin - Waste Collection Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha512-sA+5dLeDe7+9Xr+2qD/2pUyHzyTt0bQD/f/r4IWeUDeN7sbJmRXItkpdmzB88TrYzvct5V3mI+gE1fM4BzTzw==" crossorigin="" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo" onclick="scrollToTop()">
+                <span class="logo-icon">♻️</span>
+                <span class="logo-text">EcoBin</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="scrollToTop()" class="nav-link">Home</a>
+                <a href="#about" onclick="scrollToSection('about')" class="nav-link">About</a>
+                <a href="#contact" onclick="scrollToSection('contact')" class="nav-link">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1 data-aos="fade-up">Sustainable Waste Management</h1>
+            <p data-aos="fade-up" data-aos-delay="100">Join us in making the world cleaner, one pickup at a time</p>
+            
+            <div class="hero-stats" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat">
+                    <span class="stat-number">50</span>
+                    <span class="stat-label">Users</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">100 kg</span>
+                    <span class="stat-label">Waste Collected</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">70%</span>
+                    <span class="stat-label">Recycled</span>
+                </div>
+            </div>
+
+            <div class="action-buttons" data-aos="fade-up" data-aos-delay="300">
+                <button class="btn btn-primary" onclick="showModal('pickup')">
+                    <span class="btn-icon">📅</span>
+                    Schedule Pickup
+                </button>
+                <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">
+                    <span class="btn-icon">📊</span>
+                    Track Collection
+                </button>
+            </div>
+        </div>
+        
+
+    </div>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-content">
+            <h2>About Us</h2>
+            <p>EcoBin is a pioneering waste management solution that connects communities with efficient waste collection services. Our mission is to create a cleaner, greener future through sustainable waste management practices.</p>
+            <p>Using cutting-edge technology and an innovative mapping system, we make waste collection and recycling accessible to everyone while promoting environmental consciousness.</p>
+            
+            <div class="about-cards">
+                <div class="about-card">
+                    <i class="fas fa-leaf"></i>
+                    <h3>Eco-Friendly</h3>
+                    <p>Committed to sustainable practices and environmental preservation.</p>
+                </div>
+                
+                <div class="about-card">
+                    <i class="fas fa-truck"></i>
+                    <h3>Efficient Collection</h3>
+                    <p>Smart routing and timely pickups for optimal waste management.</p>
+                </div>
+                
+                <div class="about-card">
+                    <i class="fas fa-sync-alt"></i>
+                    <h3>Full Recycling</h3>
+                    <p>Advanced sorting and recycling processes for maximum resource recovery.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="slideshow-container">
+        <!-- Slide 1 -->
+        <div class="slide active">
+            <img src="impact-improper-waste-disposal-highlighted-by-polluted-river-full-plastic-concept-environmental-issues-water-pollution-plastic-pollution-improper-waste-disposal-impact-ecosystem_918839-94518.avif" alt="Landfill Impact" class="slide-image">
+            <div class="slide-content">
+                <h3>The Environmental Crisis</h3>
+                <p>Every year, over 2 billion tonnes of waste end up in our landfills, contributing to greenhouse gas emissions and soil contamination. Proper waste management is crucial for reducing these environmental impacts and preserving our planet for future generations.</p>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide">
+            <img src="recycling.jpg" alt="Recycling Process" class="slide-image">
+            <div class="slide-content">
+                <h3>The Power of Recycling</h3>
+                <p>Recycling just one ton of paper saves 17 trees, 7,000 gallons of water, and 380 gallons of oil. By implementing proper recycling practices, we can significantly reduce our carbon footprint and conserve valuable natural resources.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+            <img src="trash-bins-separate-recycle-garbage-containers-sort-plastic-glass-paper-metal-organic-waste-recycling-flat-different-colors-rubbish-cans-sorting-segregation-litter_88138-895.avif">
+            <div class="slide-content">
+                <h3>Organic Waste Management</h3>
+                <p>Composting organic waste can reduce methane emissions from landfills while creating nutrient-rich soil for agriculture. This natural process transforms food scraps and yard waste into valuable resources for sustainable farming.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide">
+            <img src="concept-of-sustainable-development.jpg" alt="Sustainable Cities" class="slide-image">
+            <div class="slide-content">
+                <h3>Building Sustainable Communities</h3>
+                <p>Smart waste management systems are essential for sustainable urban development. By implementing innovative solutions like EcoBin, cities can reduce waste collection costs by up to 30% while improving environmental outcomes.</p>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <button class="prev-btn" onclick="changeSlide(-1)">❮</button>
+        <button class="next-btn" onclick="changeSlide(1)">❯</button>
+
+        <!-- Navigation Dots -->
+        <div class="slide-nav">
+            <span class="slide-nav-btn active" onclick="setSlide(0)"></span>
+            <span class="slide-nav-btn" onclick="setSlide(1)"></span>
+            <span class="slide-nav-btn" onclick="setSlide(2)"></span>
+            <span class="slide-nav-btn" onclick="setSlide(3)"></span>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const navBtns = document.querySelectorAll('.slide-nav-btn');
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            navBtns.forEach(btn => btn.classList.remove('active'));
+            
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            navBtns[currentSlide].classList.add('active');
+        }
+
+        function changeSlide(n) {
+            showSlide(currentSlide + n);
+        }
+
+        function setSlide(n) {
+            showSlide(n);
+        }
+
+        // Auto advance slides every 5 seconds
+        setInterval(() => changeSlide(1), 5000);
+    </script>
+</section>
+
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content" data-aos="zoom-in">
+            <div class="modal-header">
+                <h2 id="modalTitle">Schedule Pickup</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="auth-options">
+                <button class="auth-btn active" onclick="switchAuth('login')">Login</button>
+                <button class="auth-btn" onclick="switchAuth('register')">Register</button>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <input type="hidden" id="loginRedirectTo" value="">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-group">
+                        <span class="input-icon">📧</span>
+                        <input type="email" id="email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            
+            <!-- Welcome Message Container (Hidden initially) -->
+            <div id="welcomeMessage" class="welcome-message" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; background: #f0f0f0; padding: 20px; border-radius: 10px; text-align: center;">
+                Welcome back!
+            </div>
+
+            <form id="registerForm" class="auth-form" style="max-height: 300px; overflow-y: auto; padding-right: 10px;">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="regName" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <div class="input-group">
+                        <span class="input-icon">📧</span>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="regConfirmPassword" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+            
+        </div>
+    </div>
+    <div id="map" style="height: 400px; width: 100%;"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha512-H0F90LDCDV8uEw8oB8lDl0ElKqAE0WqICZScK6rl7E3Z2XlvdbqgQ6VZZuI3U1Jv8dEASBxB+RZhE6uM8yGp2g==" crossorigin=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="script.js"></script>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +91 8604247471</p>
+                <p><i class="fas fa-envelope"></i> info@ecobin.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> 5th Floor, ABC Tower  
+                    MG Road, Kochi, Kerala - 682016  
+                    India</p>
+            </div>
+            <div class="footer-section">
+                <h3>Working Hours</h3>
+                <p><i class="far fa-clock"></i> Monday - Friday: 8:00 AM - 6:00 PM</p>
+                <p><i class="far fa-clock"></i> Saturday: 9:00 AM - 4:00 PM</p>
+                <p><i class="far fa-clock"></i> Sunday: Closed</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <p>Stay connected with us on social media for updates and eco-tips!</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        
+    </footer>
+
+    <script>
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+
+<script>
+    // Smooth scrolling function for navigation
+    function scrollToSection(sectionId) {
+        event.preventDefault();
+        const section = document.getElementById(sectionId);
+        const navbarHeight = document.querySelector('.navbar').offsetHeight;
+        const targetPosition = section.getBoundingClientRect().top + window.scrollY - navbarHeight;
+        
+        window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+        });
+    }
+
+    // Function to scroll to top (for logo and home link)
+    function scrollToTop() {
+        event.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // Add cursor pointer to logo
+    document.querySelector('.logo').style.cursor = 'pointer';
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+    </script>
+
+
+
+</body>
+</html>
